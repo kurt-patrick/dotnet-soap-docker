@@ -27,18 +27,36 @@
 #
 # https://docs.microsoft.com/en-us/nuget/install-nuget-client-tools
 
-
-FROM mcr.microsoft.com/dotnet/framework/aspnet:3.5 as build
-#ARG source
-
-WORKDIR /src
-
-COPY ./SoapTest.sln .
-COPY ./SoapTest.vbproj .
-COPY ./Web.config .
-COPY ./nuget.exe .
-
-RUN nuget restore
+#
+# msbuild will need to be added to the enviroment path
+# C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\amd64
+#
 
 
-# the launch cmd is in the base images - as such the CMD command is not required
+#FROM mcr.microsoft.com/dotnet/framework/aspnet:3.5 as build
+
+#WORKDIR /src
+
+# restore dependencies
+#COPY ./SoapTest.sln .
+#COPY ./SoapTest.vbproj .
+#COPY ./Web.config .
+#COPY ./nuget.exe .
+#COPY ./MSBuild.exe .
+#RUN nuget restore
+
+# build
+#COPY . .
+#RUN msbuild /p:Configuration=Release /m
+
+
+
+FROM mcr.microsoft.com/dotnet/framework/aspnet:4.6.2
+WORKDIR /inetpub/wwwroot
+COPY ./bin/release/publish .
+
+# docker build --tag soaptest .
+
+# docker run -p 8080:80  -p 4443:443 -d soaptest
+
+# http://localhost:8080/WebService1.asmx
